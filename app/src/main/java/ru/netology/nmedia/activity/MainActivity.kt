@@ -10,7 +10,8 @@ import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.util.AndroidUtils
+import ru.netology.nmedia.util.hideKeyboard
+import ru.netology.nmedia.util.showSoftKeyboard
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                 editText.text = ""
                 editedPost.visibility = View.GONE
                 content.clearFocus()
-                AndroidUtils.hideKeyboard(this.content)
+                content.hideKeyboard()
             }
         }
 
@@ -71,8 +72,7 @@ class MainActivity : AppCompatActivity() {
                 content.setText("")
                 editText.text = ""
                 editedPost.visibility = View.GONE
-                content.clearFocus()
-                AndroidUtils.hideKeyboard(this.content)
+                content.hideKeyboard()
             }
         }
 
@@ -80,10 +80,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.edited.observe(this) {
             if (it.id != 0L) {
                 with(binding) {
-                    content.requestFocus()
+                    editedPost.visibility = View.VISIBLE
                     content.setText(it.content)
                     editText.text = it.content
-                    editedPost.visibility = View.VISIBLE
+                    content.requestFocus()
                 }
             }
         }
