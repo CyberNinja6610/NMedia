@@ -12,6 +12,7 @@ fun EditText.showSoftKeyboard() {
 }
 
 fun EditText.hideKeyboard() {
+    this.clearFocus()
     (this.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
         .hideSoftInputFromWindow(this.windowToken, 0)
 }

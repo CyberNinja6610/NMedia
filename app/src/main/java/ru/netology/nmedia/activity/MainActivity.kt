@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity() {
                 content.setText("")
                 editText.text = ""
                 editedPost.visibility = View.GONE
-                content.clearFocus()
                 content.hideKeyboard()
             }
         }
