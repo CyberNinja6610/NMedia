@@ -19,7 +19,6 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/edited_post"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -76,6 +75,14 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/edit_text_top"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="tools_top, edited_post" />
+
+    <androidx.constraintlayout.widget.Barrier
         android:id="@+id/tools_top"
         android:visibility="gone"
         android:layout_width="wrap_content"
@@ -111,6 +118,12 @@
         app:layout_constraintStart_toEndOf="@id/content"
         app:srcCompat="@drawable/ic_save_48" />
 
+    <androidx.constraintlayout.widget.Group
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="edited_post, edit_text_top"
+        android:id="@+id/edit_group" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

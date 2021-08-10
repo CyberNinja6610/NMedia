@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             with(binding) {
                 content.setText("")
                 editText.text = ""
-                editedPost.visibility = View.GONE
+                editGroup.visibility = View.GONE
                 content.hideKeyboard()
             }
         }
@@ -80,10 +80,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.edited.observe(this) {
             if (it.id != 0L) {
                 with(binding) {
-                    editedPost.visibility = View.VISIBLE
+                    editGroup.visibility = View.VISIBLE
                     content.setText(it.content)
                     editText.text = it.content
-                    content.requestFocus()
+                    content.showSoftKeyboard()
                 }
             }
         }
