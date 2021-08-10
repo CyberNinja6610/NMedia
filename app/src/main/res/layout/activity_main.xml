@@ -21,11 +21,11 @@
         android:id="@+id/edited_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="vertical"
         android:padding="4dp"
         app:layout_constraintBottom_toTopOf="@id/tools_top"
         app:layout_constraintEnd_toEndOf="parent"
+        tools:text=""
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
@@ -45,7 +45,6 @@
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/common_spacing"
             android:text="@string/edit_message"
-            android:textColor="@color/grey"
             app:layout_constraintStart_toEndOf="@id/edit_icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
@@ -115,6 +114,7 @@
         android:contentDescription="@string/save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintStart_toEndOf="@id/content"
         app:srcCompat="@drawable/ic_save_48" />
 

@@ -1,5 +1,6 @@
 package ru.netology.nmedia.adapter
 
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
@@ -41,9 +42,9 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            likeIcon.setImageResource(if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_round_favorite_border_24)
-            likeText.text = post.likes.formatToString()
-            shareText.text = post.shares.formatToString()
+            likeIcon.isChecked = post.likedByMe
+            likeIcon.text = post.likes.formatToString()
+            shareIcon.text = post.shares.formatToString()
 
             likeIcon.setOnClickListener {
                 onInteractionListener.onLike(post)
@@ -54,7 +55,7 @@ class PostViewHolder(
             }
 
             menu.setOnClickListener {
-                PopupMenu(it.context, it).apply {
+                val popup = PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
                     setOnMenuItemClickListener { menuItem ->
                         when (menuItem.itemId) {
@@ -69,7 +70,8 @@ class PostViewHolder(
                             else -> false
                         }
                     }
-                }.show()
+                }
+                popup.show()
             }
         }
     }
