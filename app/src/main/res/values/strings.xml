@@ -12,7 +12,7 @@
     <string name="edit">Edit</string>
     <string name="can_not_be_empty">Content can\'t be empty</string>
     <string name="edit_message">Edit message</string>
-    <string name="save_post">Save post</string>
-    <string name="add_edit">Add/Edit</string>
     <string name="play">Play</string>
+    <string name="save_post">SavePost</string>
+    <string name="add_edit">Add/Edit</string>
 </resources>

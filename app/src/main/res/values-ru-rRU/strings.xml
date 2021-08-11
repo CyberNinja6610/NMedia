@@ -11,7 +11,9 @@
     <string name="remove">Удалить</string>
     <string name="save">Сохранить</string>
     <string name="edit">Редактировать</string>
-    <string name="can_not_be_empty">Content can\'t be empty</string>
-    <string name="edit_message">Edit message</string>
     <string name="play">Play</string>
+    <string name="save_post">Сохранить пост</string>
+    <string name="add_edit">Добавить/HРедактировать</string>
+    <string name="edit_message">Редактировать сообщение</string>
+    <string name="can_not_be_empty">Содержимое не может быть пустым</string>
 </resources>
