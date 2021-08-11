@@ -69,12 +69,36 @@
         app:layout_constraintTop_toBottomOf="@id/barrier_top"
         tools:text="@string/post_text" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier_bottom"
+    <ImageView
+        android:id="@+id/video_preview"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="@+id/video_group"
+        app:layout_constraintStart_toStartOf="@+id/video_group"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/avatar_description"
+        android:src="@drawable/youtube_preview" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/video_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="content" />
+        android:layout_margin="@dimen/common_spacing"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@id/video_preview"
+        app:layout_constraintTop_toTopOf="@id/video_preview"
+        app:layout_constraintEnd_toEndOf="@id/video_preview"
+        app:layout_constraintStart_toStartOf="@id/video_preview"
+        app:srcCompat="@drawable/ic_baseline_play_arrow_24"
+        android:contentDescription="@string/play" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/video_group"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="video_play, video_preview"/>
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/like_icon"
@@ -88,6 +112,14 @@
         tools:checked="true"
         tools:text="1"
         />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:barrierDirection="bottom"
+        app:layout_constraintTop_toBottomOf="@id/video_group"
+        app:constraint_referenced_ids="video_preview, like_icon" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/share_icon"

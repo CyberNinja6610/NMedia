@@ -1,9 +1,12 @@
 package ru.netology.nmedia.activity
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.launch
 import androidx.activity.viewModels
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -22,12 +25,26 @@ class MainActivity : AppCompatActivity() {
 
         val viewModel: PostViewModel by viewModels()
 
+        val newPostLauncher = registerForActivityResult(NewPostResultContract()) {
+                result -> result?:return@registerForActivityResult
+            viewModel.changeContent(result)
+            viewModel.save()
+        }
+
         val adapter = PostsAdapter(onInteractionListener = object : OnInteractionListener {
             override fun onLike(post: Post) {
                 viewModel.likeById(post.id)
             }
 
             override fun onShare(post: Post) {
+                val intent = Intent().apply{
+                    action = Intent.ACTION_SEND
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, post.content)
+                }
+
+                Intent.createChooser(intent, getString(R.string.share_description))
+                startActivity(intent)
                 viewModel.shareById(post.id)
             }
 
@@ -37,6 +54,12 @@ class MainActivity : AppCompatActivity() {
 
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
+                newPostLauncher.launch(post.content)
+            }
+
+            override fun onVideoPlay(post: Post) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(post.video)));
+
             }
 
         })
@@ -46,46 +69,10 @@ class MainActivity : AppCompatActivity() {
             adapter.submitList(posts)
         }
 
-        binding.save.setOnClickListener {
-            with(binding) {
-                if (content.text.isNullOrBlank()) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        content.context.getString(R.string.can_not_be_empty),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-                viewModel.changeContent(content.text.toString())
-                viewModel.save()
-
-                content.setText("")
-                editText.text = ""
-                editedPost.visibility = View.GONE
-                content.hideKeyboard()
-            }
+        binding.fab.setOnClickListener {
+            newPostLauncher.launch(null)
         }
 
-        binding.cancelEdit.setOnClickListener {
-            with(binding) {
-                content.setText("")
-                editText.text = ""
-                editGroup.visibility = View.GONE
-                content.hideKeyboard()
-            }
-        }
-
-
-        viewModel.edited.observe(this) {
-            if (it.id != 0L) {
-                with(binding) {
-                    editGroup.visibility = View.VISIBLE
-                    content.setText(it.content)
-                    editText.text = it.content
-                    content.showSoftKeyboard()
-                }
-            }
-        }
     }
 
 

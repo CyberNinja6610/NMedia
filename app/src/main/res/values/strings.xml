@@ -5,11 +5,14 @@
     <string name="avatar_description">Avatar</string>
     <string name="like_description">Likes</string>
     <string name="share_description">Share</string>
-    <string name="view_description" >Viewed</string>
+    <string name="view_description">Viewed</string>
     <string name="post_text">Input text</string>
     <string name="remove">Remove</string>
     <string name="save">Save</string>
     <string name="edit">Edit</string>
     <string name="can_not_be_empty">Content can\'t be empty</string>
     <string name="edit_message">Edit message</string>
+    <string name="save_post">Save post</string>
+    <string name="add_edit">Add/Edit</string>
+    <string name="play">Play</string>
 </resources>

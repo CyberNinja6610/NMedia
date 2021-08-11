@@ -13,4 +13,5 @@
     <string name="edit">Редактировать</string>
     <string name="can_not_be_empty">Content can\'t be empty</string>
     <string name="edit_message">Edit message</string>
+    <string name="play">Play</string>
 </resources>

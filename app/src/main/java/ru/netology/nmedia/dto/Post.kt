@@ -7,5 +7,6 @@ data class Post(
     val published: String,
     var likedByMe: Boolean = false,
     val likes: Long = 0,
-    val shares: Long = 0
+    val shares: Long = 0,
+    val video: String? = ""
 )
