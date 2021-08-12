@@ -13,7 +13,7 @@
     <string name="edit">Редактировать</string>
     <string name="play">Play</string>
     <string name="save_post">Сохранить пост</string>
-    <string name="add_edit">Добавить/HРедактировать</string>
+    <string name="add_edit">Добавить/Редактировать</string>
     <string name="edit_message">Редактировать сообщение</string>
     <string name="can_not_be_empty">Содержимое не может быть пустым</string>
 </resources>
