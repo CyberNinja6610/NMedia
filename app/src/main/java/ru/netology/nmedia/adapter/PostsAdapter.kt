@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.helpres.formatToString
 import ru.netology.nmedia.util.addOnClickListener
@@ -21,6 +22,7 @@ interface OnInteractionListener {
     fun onRemove(post: Post) {}
     fun onEdit(post: Post) {}
     fun onVideoPlay(post: Post) {}
+    fun onDetail(post: Post) {}
 }
 
 class PostsAdapter(
@@ -37,8 +39,9 @@ class PostsAdapter(
     }
 }
 
-class PostViewHolder(
-    private val binding: CardPostBinding,
+
+open class PostViewHolder(
+    protected open val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
@@ -63,6 +66,10 @@ class PostViewHolder(
                 onInteractionListener.onVideoPlay(post)
             }
 
+            postContainer.setOnClickListener {
+                onInteractionListener.onDetail(post)
+            }
+
             menu.setOnClickListener {
                 val popup = PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -85,6 +92,7 @@ class PostViewHolder(
         }
     }
 }
+
 
 class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {

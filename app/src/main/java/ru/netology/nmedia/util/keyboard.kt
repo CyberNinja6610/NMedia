@@ -8,7 +8,7 @@ import android.widget.EditText
 fun EditText.showSoftKeyboard() {
     this.requestFocus()
     (this.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
-        .showSoftInput(this, InputMethodManager.SHOW_FORCED)
+        .toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
 }
 
 fun EditText.hideKeyboard() {
