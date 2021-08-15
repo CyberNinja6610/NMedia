@@ -1,12 +1,13 @@
 package ru.netology.nmedia.dao
 
-import ru.netology.nmedia.dto.Post
+import androidx.lifecycle.LiveData
+import ru.netology.nmedia.entity.PostEntity
 
 interface PostDao {
-    fun getAll(): List<Post>
-    fun save(post: Post): Post
+    fun getAll(): LiveData<List<PostEntity>>
+    fun save(post: PostEntity)
     fun likeById(id:Long)
     fun removeById(id: Long)
     fun shareById(id: Long)
-    fun getDraft(): Post?
+    fun getDraft(): PostEntity?
 }

@@ -1,161 +1,43 @@
 package ru.netology.nmedia.dao
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import ru.netology.nmedia.entity.PostEntity
 
-import android.content.ContentValues
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
-import ru.netology.nmedia.dto.Post
 
-class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
-    companion object {
-        val DDL = """
-        CREATE TABLE ${PostColumns.TABLE} (
-            ${PostColumns.COLUMN_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-            ${PostColumns.COLUMN_AUTHOR} TEXT NOT NULL,
-            ${PostColumns.COLUMN_CONTENT} TEXT NOT NULL,
-            ${PostColumns.COLUMN_PUBLISHED} TEXT NOT NULL,
-            ${PostColumns.COLUMN_LIKED_BY_ME} BOOLEAN NOT NULL DEFAULT 0,
-            ${PostColumns.COLUMN_LIKES} INTEGER NOT NULL DEFAULT 0,
-            ${PostColumns.COLUMN_SHARES} INTEGER NOT NULL DEFAULT 0,
-            ${PostColumns.COLUMN_IS_DRAFT} BOOLEAN NOT NULL DEFAULT 0,
-            ${PostColumns.COLUMN_VIDEO} TEXT NOT NULL
-        );
-        """.trimIndent()
-    }
+@Dao
+interface PostDaoImpl: PostDao {
+    @Query("SELECT * FROM PostEntity WHERE isDraft = 0 ORDER BY id DESC")
+    override fun getAll(): LiveData<List<PostEntity>>
 
-    object PostColumns {
-        const val TABLE = "posts"
-        const val COLUMN_ID = "id"
-        const val COLUMN_AUTHOR = "author"
-        const val COLUMN_CONTENT = "content"
-        const val COLUMN_PUBLISHED = "published"
-        const val COLUMN_LIKED_BY_ME = "likedByMe"
-        const val COLUMN_LIKES = "likes"
-        const val COLUMN_SHARES = "shares"
-        const val COLUMN_VIDEO = "video"
-        const val COLUMN_IS_DRAFT = "isDraft"
-        val ALL_COLUMNS = arrayOf(
-            COLUMN_ID,
-            COLUMN_AUTHOR,
-            COLUMN_CONTENT,
-            COLUMN_PUBLISHED,
-            COLUMN_LIKED_BY_ME,
-            COLUMN_LIKES,
-            COLUMN_SHARES,
-            COLUMN_VIDEO,
-            COLUMN_IS_DRAFT
-        )
-    }
+    @Insert
+    fun insert(post: PostEntity)
 
-    override fun getAll(): List<Post> {
-        val posts = mutableListOf<Post>()
-        db.query(
-            PostColumns.TABLE,
-            PostColumns.ALL_COLUMNS,
-            "${PostColumns.COLUMN_IS_DRAFT} = 0",
-            null,
-            null,
-            null,
-            "${PostColumns.COLUMN_ID} DESC"
-        ).use {
-            while (it.moveToNext()) {
-                posts.add(map(it))
-            }
-        }
-        return posts
-    }
+    @Query("UPDATE PostEntity SET content = :content, isDraft = :isDraft WHERE id = :id")
+    fun updateContentById(id: Long, content: String, isDraft: Boolean)
 
-    override fun getDraft(): Post? {
-        var post: Post? = null
-        db.query(
-            PostColumns.TABLE,
-            PostColumns.ALL_COLUMNS,
-            "${PostColumns.COLUMN_IS_DRAFT} = 1",
-            null,
-            null,
-            null,
-            "${PostColumns.COLUMN_ID} DESC",
-            "1"
-        ).use {
-            if (it.moveToNext()) {
-                post = map(it)
-            }
-        }
+    override fun save(post: PostEntity) =
+        if (post.id == 0L) insert(post) else updateContentById(post.id, post.content, post.isDraft)
 
-        return post;
-    }
+    @Query("""
+        UPDATE PostEntity SET
+        likes = likes + CASE WHEN likedByMe THEN -1 ELSE 1 END,
+        likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
+        WHERE id = :id
+        """)
+    override fun likeById(id: Long)
 
-    override fun save(post: Post): Post {
-        val values = ContentValues().apply {
-            if (post.id != 0L) {
-                put(PostColumns.COLUMN_ID, post.id)
-            }
-            // TODO: remove hardcoded values
-            put(PostColumns.COLUMN_AUTHOR, post.author)
-            put(PostColumns.COLUMN_CONTENT, post.content)
-            put(PostColumns.COLUMN_PUBLISHED, post.published)
-            put(PostColumns.COLUMN_VIDEO, post.video)
-            put(PostColumns.COLUMN_SHARES, post.shares)
-            put(PostColumns.COLUMN_IS_DRAFT, post.isDraft)
-            put(PostColumns.COLUMN_LIKED_BY_ME, post.likedByMe)
-            put(PostColumns.COLUMN_LIKES, post.likes)
-        }
-        val id = db.replace(PostColumns.TABLE, null, values)
-        db.query(
-            PostColumns.TABLE,
-            PostColumns.ALL_COLUMNS,
-            "${PostColumns.COLUMN_ID} = ?",
-            arrayOf(id.toString()),
-            null,
-            null,
-            null,
-        ).use {
-            it.moveToNext()
-            return map(it)
-        }
-    }
+    @Query("""
+        UPDATE PostEntity SET
+        shares = shares + 1
+        WHERE id = :id
+        """)
+    override fun shareById(id: Long)
 
-    override fun likeById(id: Long) {
-        db.execSQL(
-            """
-           UPDATE posts SET
-               likes = likes + CASE WHEN likedByMe THEN -1 ELSE 1 END,
-               likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
-           WHERE id = ?;
-        """.trimIndent(), arrayOf(id)
-        )
-    }
+    @Query("DELETE FROM PostEntity WHERE id = :id")
+    override fun removeById(id: Long)
 
-    override fun shareById(id: Long) {
-        db.execSQL(
-            """
-           UPDATE posts SET
-               shares = shares + 1
-           WHERE id = ?;
-        """.trimIndent(), arrayOf(id)
-        )
-    }
-
-    override fun removeById(id: Long) {
-        db.delete(
-            PostColumns.TABLE,
-            "${PostColumns.COLUMN_ID} = ?",
-            arrayOf(id.toString())
-        )
-    }
-
-    private fun map(cursor: Cursor): Post {
-        with(cursor) {
-            return Post(
-                id = getLong(getColumnIndexOrThrow(PostColumns.COLUMN_ID)),
-                author = getString(getColumnIndexOrThrow(PostColumns.COLUMN_AUTHOR)),
-                content = getString(getColumnIndexOrThrow(PostColumns.COLUMN_CONTENT)),
-                published = getString(getColumnIndexOrThrow(PostColumns.COLUMN_PUBLISHED)),
-                likedByMe = getInt(getColumnIndexOrThrow(PostColumns.COLUMN_LIKED_BY_ME)) != 0,
-                likes = getLong(getColumnIndexOrThrow(PostColumns.COLUMN_LIKES)),
-                shares = getLong(getColumnIndexOrThrow(PostColumns.COLUMN_SHARES)),
-                video = getString(getColumnIndexOrThrow(PostColumns.COLUMN_VIDEO)),
-                isDraft = getInt(getColumnIndexOrThrow(PostColumns.COLUMN_IS_DRAFT)) != 0,
-            )
-        }
-    }
+    @Query("SELECT * FROM PostEntity WHERE isDraft = 1 ORDER BY id DESC LIMIT 1")
+    override fun getDraft(): PostEntity
 }

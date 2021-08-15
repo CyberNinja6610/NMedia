@@ -58,7 +58,7 @@ class DetailFragment : Fragment() {
 
                 Intent.createChooser(intent, getString(R.string.share_description))
                 startActivity(intent)
-                /*viewModel.shareById(post.id)*/
+                viewModel.shareById(post.id)
             }
 
             override fun onRemove(post: Post) {
