@@ -129,7 +129,7 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
         db.execSQL(
             """
            UPDATE posts SET
-               shares = shares + 1,
+               shares = shares + 1
            WHERE id = ?;
         """.trimIndent(), arrayOf(id)
         )

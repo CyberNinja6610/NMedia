@@ -45,7 +45,7 @@ open class PostViewHolder(
         with(binding) {
             author.text = post.author
             published.text = post.published
-            content.text = post.toString()
+            content.text = post.content
             likeIcon.isChecked = post.likedByMe
             likeIcon.text = post.likes.formatToString()
             shareIcon.text = post.shares.formatToString()
