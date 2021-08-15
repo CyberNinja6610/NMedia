@@ -22,16 +22,8 @@ class PostRepositorySQLiteImpl(
     override fun getAll(): LiveData<List<Post>> = data
 
     override fun save(post: Post) {
-        val id = post.id
-        val saved = dao.save(post)
-        posts = if (id == 0L) {
-            listOf(saved) + posts
-        } else {
-            posts.map {
-                if (it.id != id) it else saved
-            }
-        }
-        data.value = posts
+        dao.save(post)
+        data.value = dao.getAll()
         draft.value = dao.getDraft()
     }
 
@@ -41,25 +33,19 @@ class PostRepositorySQLiteImpl(
 
     override fun likeById(id: Long) {
         dao.likeById(id)
-        posts = posts.map {
-            if (it.id != id) it else it.copy(
-                likedByMe = !it.likedByMe,
-                likes = if (it.likedByMe) it.likes - 1 else it.likes + 1
-            )
-        }
-        data.value = posts
+        data.value = dao.getAll()
+        draft.value = dao.getDraft()
     }
 
     override fun shareById(id: Long) {
-        posts = posts.map {
-            if (it.id != id) it else it.copy(shares = it.shares + 1)
-        }
-        data.value = posts
+        dao.shareById(id)
+        data.value = dao.getAll()
+        draft.value = dao.getDraft()
     }
 
     override fun removeById(id: Long) {
         dao.removeById(id)
-        posts = posts.filter { it.id != id }
-        data.value = posts
+        data.value = dao.getAll()
+        draft.value = dao.getDraft()
     }
 }
