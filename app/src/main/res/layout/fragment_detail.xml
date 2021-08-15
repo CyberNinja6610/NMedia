@@ -6,8 +6,7 @@
     android:layout_height="match_parent">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/common_spacing">
+            android:layout_height="wrap_content">
             <include android:id="@+id/card_post" android:layout_width="match_parent" android:layout_height="match_parent" layout="@layout/card_post" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

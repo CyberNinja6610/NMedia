@@ -3,30 +3,36 @@ package ru.netology.nmedia.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryFile
+import ru.netology.nmedia.repository.PostRepositorySQLiteImpl
 
 private val empty = Post(
     id = 0,
     content = "",
-    author = "",
+    author = "Me",
     likedByMe = false,
-    published = "",
-    video = ""
+    published = "Now",
+    video = "",
+    shares = 0,
+    likes = 0,
+    isDraft = true
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository = PostRepositoryFile(application)
+    private val repository: PostRepository = PostRepositorySQLiteImpl(
+        AppDb.getInstance(application).postDao
+    )
     val data = repository.getAll()
+    var draft = repository.getDraft() ?: empty.copy(isDraft = true)
     val edited = MutableLiveData(empty)
-    val opened = MutableLiveData(empty)
     fun save() {
         edited.value?.let {
             repository.save(it)
         }
         edited.value = empty;
+        draft = repository.getDraft() ?: empty.copy(isDraft = true)
     }
 
     fun edit(post: Post) {
@@ -40,27 +46,21 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 return
             }
             edited.value = edited.value?.copy(content = text)
-            if (edited.value?.id == opened.value?.id) {
-                opened.value = edited.value?.copy()
-            }
         }
     }
 
-    fun open(post: Post) {
-        opened.value = post
+    fun changeIsDraft(isDraft: Boolean) {
+        edited.value?.let {
+            edited.value = edited.value?.copy(isDraft = isDraft)
+        }
     }
+
 
     fun likeById(id: Long) {
         repository.likeById(id)
-        syncOpened(id)
     }
 
     fun shareById(id: Long) = repository.shareById(id)
     fun removeById(id: Long) = repository.removeById(id)
 
-    private fun syncOpened(id: Long) {
-        opened.value = data.value?.find {
-            it.id == id
-        }?.copy()
-    }
 }

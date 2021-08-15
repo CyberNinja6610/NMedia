@@ -18,10 +18,16 @@ import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.databinding.FragmentDetailBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.helpres.formatToString
+import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.util.addOnClickListener
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class DetailFragment : Fragment() {
+
+    companion object {
+        var Bundle.postId: String? by StringArg
+    }
+
     private val viewModel: PostViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
@@ -78,48 +84,52 @@ class DetailFragment : Fragment() {
         }
 
 
-        viewModel.opened
-            .observe(viewLifecycleOwner) { post ->
+        viewModel.data
+            .observe(viewLifecycleOwner) { posts ->
                 with(binding.cardPost) {
-                    author.text = post.author
-                    published.text = post.published
-                    content.text = post.content
-                    likeIcon.isChecked = post.likedByMe
-                    likeIcon.text = post.likes.formatToString()
-                    shareIcon.text = post.shares.formatToString()
-                    videoGroup.visibility =
-                        if (post.video.isNullOrBlank()) View.GONE else View.VISIBLE
+                    arguments?.postId?.let { postId ->
+                        posts.find { it.id == postId.toLong() }?.let { post ->
+                            author.text = post.author
+                            published.text = post.published
+                            content.text = post.content
+                            likeIcon.isChecked = post.likedByMe
+                            likeIcon.text = post.likes.formatToString()
+                            shareIcon.text = post.shares.formatToString()
+                            videoGroup.visibility =
+                                if (post.video.isNullOrBlank()) View.GONE else View.VISIBLE
 
-                    likeIcon.setOnClickListener {
-                        onInteractionListener.onLike(post)
-                    }
+                            likeIcon.setOnClickListener {
+                                onInteractionListener.onLike(post)
+                            }
 
-                    shareIcon.setOnClickListener {
-                        onInteractionListener.onShare(post)
-                    }
+                            shareIcon.setOnClickListener {
+                                onInteractionListener.onShare(post)
+                            }
 
-                    videoGroup.addOnClickListener {
-                        onInteractionListener.onVideoPlay(post)
-                    }
+                            videoGroup.addOnClickListener {
+                                onInteractionListener.onVideoPlay(post)
+                            }
 
-                    menu.setOnClickListener {
-                        val popup = PopupMenu(it.context, it).apply {
-                            inflate(R.menu.options_post)
-                            setOnMenuItemClickListener { menuItem ->
-                                when (menuItem.itemId) {
-                                    R.id.menu_remove -> {
-                                        onInteractionListener.onRemove(post)
-                                        true
+                            menu.setOnClickListener {
+                                val popup = PopupMenu(it.context, it).apply {
+                                    inflate(R.menu.options_post)
+                                    setOnMenuItemClickListener { menuItem ->
+                                        when (menuItem.itemId) {
+                                            R.id.menu_remove -> {
+                                                onInteractionListener.onRemove(post)
+                                                true
+                                            }
+                                            R.id.menu_edit -> {
+                                                onInteractionListener.onEdit(post)
+                                                true
+                                            }
+                                            else -> false
+                                        }
                                     }
-                                    R.id.menu_edit -> {
-                                        onInteractionListener.onEdit(post)
-                                        true
-                                    }
-                                    else -> false
                                 }
+                                popup.show()
                             }
                         }
-                        popup.show()
                     }
                 }
             }
