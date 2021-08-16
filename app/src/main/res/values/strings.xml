@@ -15,4 +15,8 @@
     <string name="play">Play</string>
     <string name="save_post">SavePost</string>
     <string name="add_edit">Add/Edit</string>
+    <string name="channel_remote_name">Server notifications</string>
+    <string name="channel_remote_description">Notifications from remote server</string>
+    <string name="notification_user_liked">User %1$s liked %2$s\'s post</string>
+    <string name="notification_new_post">%1$s created post</string>
 </resources>
